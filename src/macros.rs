@@ -36,6 +36,7 @@ macro_rules! println {
 	($($arg:tt)+) => (print!("{}\n", format_args!($($arg)+)));
 }
 
+#[cfg(target_arch = "x86_64")]
 macro_rules! switch_to_kernel {
 	() => {
 		crate::arch::irq::disable();
@@ -53,6 +54,12 @@ macro_rules! switch_to_kernel {
 	}
 }
 
+#[cfg(target_arch = "aarch64")]
+macro_rules! switch_to_kernel {
+	() => {}
+}
+
+#[cfg(target_arch = "x86_64")]
 macro_rules! switch_to_user {
 	() => {
 		use crate::arch::kernel::percore::*;
@@ -68,6 +75,12 @@ macro_rules! switch_to_user {
 	}
 }
 
+#[cfg(target_arch = "aarch64")]
+macro_rules! switch_to_user {
+	() => {}
+}
+
+#[cfg(target_arch = "x86_64")]
 macro_rules! kernel_function {
 	($f:ident($($x:tt)*)) => {{
 		use crate::arch::kernel::percore::*;
@@ -98,5 +111,12 @@ macro_rules! kernel_function {
 
 			ret
 		}
+	}};
+}
+
+#[cfg(target_arch = "aarch64")]
+macro_rules! kernel_function {
+	($f:ident($($x:tt)*)) => {{
+		$f($($x)*)
 	}};
 }

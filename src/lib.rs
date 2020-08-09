@@ -66,6 +66,8 @@ extern crate num_traits;
 extern crate std;
 #[cfg(target_arch = "x86_64")]
 extern crate x86;
+#[cfg(target_arch = "aarch64")]
+extern crate aarch64;
 
 use alloc::alloc::Layout;
 use core::alloc::GlobalAlloc;

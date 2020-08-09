@@ -12,6 +12,7 @@ use alloc::rc::Rc;
 use core::cell::RefCell;
 use core::sync::atomic::{AtomicU32, Ordering};
 
+use crate::{DEFAULT_STACK_SIZE, KERNEL_STACK_SIZE};
 use crate::arch;
 use crate::arch::irq;
 use crate::arch::mm::VirtAddr;

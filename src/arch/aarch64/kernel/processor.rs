@@ -33,6 +33,10 @@ pub fn generate_random_number() -> Option<u32> {
 	None
 }
 
+pub fn run_on_hypervisor() -> bool {
+	true
+}
+
 /// Search the most significant bit
 #[inline(always)]
 pub fn msb(value: u64) -> Option<u64> {
@@ -40,7 +44,7 @@ pub fn msb(value: u64) -> Option<u64> {
 		let ret: u64;
 		let u64_bits = 64;
 		unsafe {
-			asm!("clz $0, $1; sub $0, $2, $0" : "=r"(ret) : "r"(value), "r"(u64_bits - 1) : "cc" : "volatile");
+			llvm_asm!("clz $0, $1; sub $0, $2, $0" : "=r"(ret) : "r"(value), "r"(u64_bits - 1) : "cc" : "volatile");
 		}
 		Some(ret)
 	} else {
@@ -51,7 +55,7 @@ pub fn msb(value: u64) -> Option<u64> {
 /// The halt function stops the processor until the next interrupt arrives
 pub fn halt() {
 	unsafe {
-		asm!("wfi" :::: "volatile");
+		llvm_asm!("wfi" :::: "volatile");
 	}
 }
 
@@ -77,6 +81,10 @@ pub fn get_frequency() -> u16 {
 #[inline]
 pub fn get_timestamp() -> u64 {
 	0
+}
+
+pub fn supports_1gib_pages() -> bool {
+	false
 }
 
 /// Delay execution by the given number of microseconds using busy-waiting.
