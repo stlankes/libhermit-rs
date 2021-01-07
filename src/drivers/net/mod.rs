@@ -6,7 +6,7 @@
 // http://opensource.org/licenses/MIT>, at your option. This file may not be
 // copied, modified, or distributed except according to those terms.
 
-#[cfg(feature = "pci")]
+#[cfg(all(feature = "pci", not(target_arch = "aarch64")))]
 pub mod virtio_net;
 
 use crate::arch::kernel::percore::*;

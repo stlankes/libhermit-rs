@@ -56,7 +56,7 @@ macro_rules! switch_to_kernel {
 
 #[cfg(target_arch = "aarch64")]
 macro_rules! switch_to_kernel {
-	() => {}
+	() => {};
 }
 
 #[cfg(target_arch = "x86_64")]
@@ -77,7 +77,7 @@ macro_rules! switch_to_user {
 
 #[cfg(target_arch = "aarch64")]
 macro_rules! switch_to_user {
-	() => {}
+	() => {};
 }
 
 #[cfg(target_arch = "x86_64")]

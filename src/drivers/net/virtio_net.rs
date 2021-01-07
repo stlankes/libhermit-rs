@@ -39,8 +39,8 @@ use crate::drivers::virtio::virtqueue::{
 
 use self::constants::{FeatureSet, Features, NetHdrFlag, NetHdrGSO, Status, MAX_NUM_VQ};
 use self::error::VirtioNetError;
-use crate::arch::x86_64::mm::paging::{BasePageSize, PageSize};
-use crate::arch::x86_64::mm::{paging, virtualmem, VirtAddr};
+use crate::arch::mm::paging::{BasePageSize, PageSize};
+use crate::arch::mm::{paging, virtualmem, VirtAddr};
 
 const ETH_HDR: usize = 14usize;
 
