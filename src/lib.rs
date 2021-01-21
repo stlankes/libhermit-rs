@@ -76,6 +76,7 @@ extern crate x86;
 
 use alloc::alloc::Layout;
 use core::alloc::GlobalAlloc;
+#[cfg(feature = "smp")]
 use core::sync::atomic::{spin_loop_hint, AtomicU32, Ordering};
 
 use arch::percore::*;
@@ -313,6 +314,7 @@ extern "C" fn initd(_arg: usize) {
 	test_main();
 }
 
+#[cfg(feature = "smp")]
 fn synch_all_cores() {
 	static CORE_COUNTER: AtomicU32 = AtomicU32::new(0);
 
@@ -348,6 +350,7 @@ fn boot_processor_main() -> ! {
 		arch::boot_application_processors();
 	}
 
+	#[cfg(feature = "smp")]
 	synch_all_cores();
 
 	#[cfg(feature = "pci")]
@@ -356,6 +359,8 @@ fn boot_processor_main() -> ! {
 	info!("Compiled with ACPI support");
 	#[cfg(feature = "fsgsbase")]
 	info!("Compiled with FSGSBASE support");
+	#[cfg(feature = "smp")]
+	info!("Compiled with SMP support");
 
 	// Start the initd task.
 	scheduler::PerCoreScheduler::spawn(initd, 0, scheduler::task::NORMAL_PRIO, 0, USER_STACK_SIZE);
@@ -366,7 +371,7 @@ fn boot_processor_main() -> ! {
 }
 
 /// Entry Point of HermitCore for an Application Processor
-#[cfg(target_os = "hermit")]
+#[cfg(all(target_os = "hermit", feature = "smp"))]
 fn application_processor_main() -> ! {
 	arch::application_processor_init();
 	scheduler::add_current_core();
