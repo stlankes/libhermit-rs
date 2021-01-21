@@ -6,7 +6,7 @@
 // http://opensource.org/licenses/MIT>, at your option. This file may not be
 // copied, modified, or distributed except according to those terms.
 
-#[cfg(not(feature = "newlib"))]
+#[cfg(all(not(feature = "newlib"), target_arch = "x86_64"))]
 use crate::drivers::net::*;
 use crate::environment;
 #[cfg(feature = "newlib")]
@@ -142,18 +142,18 @@ pub fn sys_rx_buffer_consumed(handle: usize) -> Result<(), ()> {
 	kernel_function!(__sys_rx_buffer_consumed(handle))
 }
 
-#[cfg(not(feature = "newlib"))]
+#[cfg(all(not(feature = "newlib"), target_arch = "x86_64"))]
 fn __sys_netwait(handle: usize, millis: Option<u64>) {
 	netwait(handle, millis)
 }
 
-#[cfg(not(feature = "newlib"))]
+#[cfg(all(not(feature = "newlib"), target_arch = "x86_64"))]
 #[no_mangle]
 pub fn sys_netwait(handle: usize, millis: Option<u64>) {
 	kernel_function!(__sys_netwait(handle, millis));
 }
 
-#[cfg(not(feature = "newlib"))]
+#[cfg(all(not(feature = "newlib"), target_arch = "x86_64"))]
 #[no_mangle]
 pub fn sys_netwait_and_wakeup(handles: &[usize], millis: Option<u64>) {
 	kernel_function!(netwait_and_wakeup(handles, millis));
