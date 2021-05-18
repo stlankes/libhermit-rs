@@ -12,6 +12,7 @@ pub mod percore;
 pub mod processor;
 pub mod scheduler;
 pub mod serial;
+mod start;
 pub mod stubs;
 pub mod systemtime;
 
@@ -90,6 +91,8 @@ static mut BOOT_INFO: BootInfo = BootInfo {
 
 // FUNCTIONS
 
+global_asm!(include_str!("start.s"));
+
 pub fn get_image_size() -> usize {
 	unsafe { core::ptr::read_volatile(&BOOT_INFO.image_size) as usize }
 }
@@ -144,6 +147,7 @@ pub fn get_cmdline() -> VirtAddr {
 pub fn message_output_init() {
 	percore::init();
 
+	#[cfg(not(feature = "aarch64-qemu-stdout"))]
 	if environment::is_single_kernel() {
 		// We can only initialize the serial port here, because VGA requires processor
 		// configuration first.
@@ -154,6 +158,11 @@ pub fn message_output_init() {
 }
 
 pub fn output_message_byte(byte: u8) {
+	#[cfg(feature = "aarch64-qemu-stdout")]
+	unsafe {
+		core::ptr::write_volatile(0x3F20_1000 as *mut u8, byte);
+	}
+	#[cfg(not(feature = "aarch64-qemu-stdout"))]
 	if environment::is_single_kernel() {
 		// Output messages to the serial port and VGA screen in unikernel mode.
 		unsafe {
@@ -291,12 +300,3 @@ pub fn network_adapter_init() -> i32 {
 }
 
 pub fn print_statistics() {}
-
-#[inline(never)]
-#[no_mangle]
-pub unsafe fn pre_init() -> ! {
-	let com1 = SerialPort::new(0x9000000);
-
-	com1.write_byte('H' as u8);
-	loop {}
-}
